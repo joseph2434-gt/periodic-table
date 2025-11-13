@@ -27,9 +27,9 @@ function toTitleCase(s){ return s.split(' ').map(p=>p[0].toUpperCase()+p.slice(1
 
 function renderTable(elements){
   table.innerHTML = '';
-  // Determine grid position:
   elements.forEach(el => {
     const elDiv = document.createElement('button');
+    elDiv.type = 'button';
     elDiv.className = 'element category-' + (el.category || 'unknown');
     elDiv.setAttribute('data-number', el.number);
     elDiv.setAttribute('aria-label', `${el.name} (${el.symbol}), atomic number ${el.number}`);
@@ -39,21 +39,46 @@ function renderTable(elements){
       <div class="name">${el.name}</div>
       <div class="mass">${el.atomic_mass}</div>
     `;
-    // CSS grid placement: use group as column and period as row (simple mapping)
-    const col = el.group || 1;
-    const row = el.period || 1;
+
+    // Prefer explicit xpos/ypos if present (common in JSON datasets), fall back to group/period or 1
+    let col = Number(el.xpos ?? el.group ?? el.column ?? 1);
+    let row = Number(el.ypos ?? el.period ?? el.row ?? 1);
+
+    // sanitize and clamp so values are integers within the grid bounds (18 columns)
+    col = Number.isFinite(col) ? Math.max(1, Math.min(18, Math.floor(col))) : 1;
+    row = Number.isFinite(row) ? Math.max(1, Math.floor(row)) : 1;
+
     elDiv.style.gridColumnStart = col;
     elDiv.style.gridRowStart = row;
-    elDiv.addEventListener('click', ()=>openModal(el));
+
+    // if category is lanthanoid/actinoid ensure they appear on their typical separate rows
+    const cat = (el.category || '').toLowerCase();
+    if(cat.includes('lanthanoid') || cat.includes('lanthanoid')){ /* defensive check */
+      // common layout places lanthanoids on an extra row near the bottom — push them to row 9 (adjust if your CSS uses different rows)
+      elDiv.style.gridRowStart = 9;
+    }
+    if(cat.includes('actinoid') || cat.includes('actinide')){ // accept common naming variants
+      elDiv.style.gridRowStart = 10;
+    }
+
+    // ensure lanthanoid/actinoid tiles are on top if there is accidental overlap
+    if(cat.includes('lanthanoid') || cat.includes('actinoid') || cat.includes('actinide')){
+      elDiv.style.zIndex = 3;
+    }
+
+    elDiv.addEventListener('click', ()=> openModal(el));
     table.appendChild(elDiv);
   });
 }
 
 function openModal(el){
+  const mass = parseFloat(el.atomic_mass);
+  const neutrons = Number.isFinite(mass) ? Math.round(mass) - el.number : 'N/A';
   modalBody.innerHTML = `
     <h2>${el.name} <small>(${el.symbol})</small></h2>
     <p><strong>Atomic number:</strong> ${el.number}</p>
     <p><strong>Atomic mass:</strong> ${el.atomic_mass}</p>
+    <p><strong>Neutrons:</strong> ${neutrons}</p>
     <p><strong>Category:</strong> ${toTitleCase(el.category || 'unknown')}</p>
     <p>${el.summary || ''}</p>
   `;
@@ -61,8 +86,8 @@ function openModal(el){
 }
 
 closeModal.addEventListener('click', ()=> modal.setAttribute('aria-hidden','true'));
-modal.addEventListener('click', (e)=> {
-  if(e.target === modal) modal.setAttribute('aria-hidden','true');
+modal.addEventListener('click', (e) => {
+  if (e.target === modal) modal.setAttribute('aria-hidden','true');
 });
 
 function attachListeners(){
@@ -101,3 +126,4 @@ function applyFilters(){
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
