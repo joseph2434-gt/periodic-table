@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Interactive Periodic Table</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Interactive Periodic Table</h1>
+    <div class="controls">
+      <input id="search" type="search" placeholder="Search by name, symbol, or atomic number..." />
+      <label><input id="rounding" type="checkbox" checked /> Round atomic mass for neutrons</label>
+    </div>
+  </header>
+
+  <main>
+    <section id="table" class="periodic-grid" aria-label="Periodic table"></section>
+
+    <aside id="details" class="details hidden" aria-live="polite">
+      <button id="close">✕</button>
+      <div id="details-content"></div>
+    </aside>
+  </main>
+
+  <footer>
+    <small>Sample dataset of first 20 elements. Replace <code>data/elements.json</code> with a full dataset to expand.</small>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
