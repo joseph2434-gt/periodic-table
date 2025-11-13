@@ -18,19 +18,20 @@ body{background:var(--bg);color:var(--text);margin:0;padding:18px;} /* removed d
    placed by their xpos/period (or group/period) appear in the classic periodic-table layout. */
 .periodic-grid{
   /* tile size scales with viewport but never gets too small or too large */
-  --tile-size: clamp(28px, calc((100vw - 96px) / 18), 72px);
+  --tile-size: clamp(20px, calc((100vw - 48px) / 18), 64px);
 
   display: grid;
   grid-template-columns: repeat(18, var(--tile-size));
   grid-auto-rows: var(--tile-size);   /* keep tiles square by matching row height to column width */
-  gap: 8px;
+  gap: 6px;
   grid-auto-flow: dense;              /* fill holes and avoid dropped items */
   justify-content: center;            /* center the whole table in the page */
   width: 100%;
-  max-width: calc(var(--tile-size) * 18 + (17 * 8px)); /* exact width of the 18-column table */
+  max-width: calc(var(--tile-size) * 18 + (17 * 6px)); /* exact width of the 18-column table */
   margin: 14px auto 0;                /* center horizontally with top margin */
   box-sizing: border-box;
-  overflow-x: auto;                   /* allow horizontal scroll on very small screens */
+  overflow: auto;                     /* allow scrolling when viewport is narrow */
+  -webkit-overflow-scrolling: touch;  /* smooth scrolling on iOS */
   align-items: start;
   align-content: start;
   padding-bottom: 8px;
@@ -41,20 +42,64 @@ body{background:var(--bg);color:var(--text);margin:0;padding:18px;} /* removed d
 
 /* make sure each tile uses the grid cell size instead of stretching */
 .element{
-  width: 100%;
-  height: 100%;
-  aspect-ratio: auto; /* let grid enforce square sizing */
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
+  width:100%;
+  height:100%;
+  min-width: var(--tile-size);
+  min-height: var(--tile-size);
+  /* switch to a small CSS grid so number/symbol share the top row and name/mass fit below */
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "number symbol"
+    "name name"
+    "mass mass";
+  gap:4px;
   padding:6px;
   border-radius:8px;
   overflow:hidden;
   position:relative;
 }
 
-/* hover */
-.element:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,0.6)}
+/* top-left: atomic number */
+.number{
+  grid-area: number;
+  font-size: clamp(8px, 1.2vw, 10px);
+  line-height:1;
+  opacity:0.9;
+  justify-self:start;
+  white-space:nowrap;
+}
+
+/* top-right: element symbol (keeps bold) */
+.symbol{
+  grid-area: symbol;
+  font-weight:700;
+  font-size: clamp(12px, 2.6vw, 18px);
+  line-height:1;
+  justify-self:end;
+}
+
+/* middle row: element name — single line, ellipsis if too long */
+.name{
+  grid-area: name;
+  font-size: clamp(8px, 1.4vw, 10px);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  align-self:center;
+}
+
+/* bottom-right: atomic mass */
+.mass{
+  grid-area: mass;
+  font-size: clamp(8px, 1.4vw, 10px);
+  justify-self:end;
+  opacity:0.85;
+}
+
+/* provide a visible focus style for keyboard/touch users */
+.element:focus{ outline: 3px solid var(--accent); outline-offset: 2px; }
 
 /* reduce hover transform so table doesn't reflow */
 .element:hover{ transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.12); }
@@ -133,4 +178,62 @@ body{background:var(--bg);color:var(--text);margin:0;padding:18px;} /* removed d
 .modal-content h2{margin-top:0}
 .modal-content p{margin:.4rem 0}
 #modalBody{word-break:break-word}
+
+/* Mobile / small-screen adjustments */
+@media (max-width: 920px){
+  .periodic-grid{
+    --tile-size: clamp(18px, calc((100vw - 32px) / 18), 56px);
+    gap: 5px;
+    justify-content: start; /* allow horizontal scroll from the left edge */
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .element{ padding:5px; border-radius:7px; }
+  .symbol{ font-size: clamp(11px, 3.0vw, 16px); }
+  .number, .name, .mass{ font-size: clamp(9px, 2.0vw, 11px); }
+}
+
+/* Very small phones: make modal full-screen and increase touch-friendliness */
+@media (max-width: 480px){
+  .periodic-grid{
+    --tile-size: clamp(16px, calc((100vw - 24px) / 18), 40px);
+    gap: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .element{
+    padding:4px;
+    border-radius:6px;
+    min-width: var(--tile-size);
+    min-height: var(--tile-size);
+  }
+
+  .symbol{ font-size: clamp(10px, 3.6vw, 14px); }
+  .number, .name, .mass{ font-size: clamp(8px, 2.4vw, 10px); }
+
+  /* Make modal occupy full screen on mobile for better legibility */
+  .modal{ padding: 6px; background: rgba(2,6,23,0.6); }
+  .modal-content{
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+    padding: 14px;
+    box-sizing: border-box;
+  }
+  .close{ top: 8px; right: 10px; font-size: 20px; }
+}
+
+/* keep touch scrolling smooth */
+.periodic-grid, .modal{ -webkit-overflow-scrolling: touch; }
+
+/* element symbol bold for better emphasis */
+.symbol{
+  font-weight: 700;
+  /* keep any existing sizing rules (if present elsewhere) */
+}
+
 
