@@ -179,41 +179,73 @@ body{background:var(--bg);color:var(--text);margin:0;padding:18px;} /* removed d
 .modal-content p{margin:.4rem 0}
 #modalBody{word-break:break-word}
 
-/* Mobile / small-screen adjustments */
+/* Responsive periodic grid: horizontal scroll + snap on small screens so tiles stay usable */
+.periodic-grid{
+  --tile-size: clamp(20px, calc((100vw - 48px) / 18), 64px);
+  display: grid;
+  grid-template-columns: repeat(18, var(--tile-size));
+  grid-auto-rows: var(--tile-size);
+  gap: 6px;
+  grid-auto-flow: dense;
+  justify-content: center;
+  width: 100%;
+  max-width: calc(var(--tile-size) * 18 + (17 * 6px));
+  margin: 14px auto 0;
+  box-sizing: border-box;
+
+  /* allow horizontal scrolling and touch panning (mobile) */
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  touch-action: pan-x;
+  padding-bottom: 8px;
+  align-items: start;
+  align-content: start;
+}
+
+/* make each grid cell a snap stop so scrolling lands cleanly */
+.periodic-grid > * {
+  box-sizing: border-box;
+  scroll-snap-align: start;
+}
+
+/* Small / mobile: increase min tile size so tiles remain tappable,
+   allow horizontal scrolling rather than shrinking everything. */
 @media (max-width: 920px){
   .periodic-grid{
-    --tile-size: clamp(18px, calc((100vw - 32px) / 18), 56px);
-    gap: 5px;
-    justify-content: start; /* allow horizontal scroll from the left edge */
+    --tile-size: clamp(28px, calc((100vw - 32px) / 18), 56px);
+    gap: 6px;
+    justify-content: start;
     padding-left: 8px;
     padding-right: 8px;
   }
 
-  .element{ padding:5px; border-radius:7px; }
-  .symbol{ font-size: clamp(11px, 3.0vw, 16px); }
+  .element{ padding:6px; border-radius:7px; }
+  .symbol{ font-size: clamp(11px, 3.0vw, 16px); font-weight:700; }
   .number, .name, .mass{ font-size: clamp(9px, 2.0vw, 11px); }
 }
 
-/* Very small phones: make modal full-screen and increase touch-friendliness */
+/* Very small phones: keep tiles larger and rely on horizontal scroll + snapping */
 @media (max-width: 480px){
   .periodic-grid{
-    --tile-size: clamp(16px, calc((100vw - 24px) / 18), 40px);
-    gap: 4px;
+    --tile-size: clamp(32px, calc((100vw - 24px) / 18), 44px);
+    gap: 6px;
     padding-left: 6px;
     padding-right: 6px;
   }
 
   .element{
-    padding:4px;
+    padding:5px;
     border-radius:6px;
     min-width: var(--tile-size);
     min-height: var(--tile-size);
   }
 
-  .symbol{ font-size: clamp(10px, 3.6vw, 14px); }
-  .number, .name, .mass{ font-size: clamp(8px, 2.4vw, 10px); }
+  .symbol{ font-size: clamp(12px, 3.6vw, 18px); font-weight:700; }
+  .number, .name, .mass{ font-size: clamp(9px, 2.4vw, 10px); }
 
-  /* Make modal occupy full screen on mobile for better legibility */
+  /* Modal full-screen for small devices */
   .modal{ padding: 6px; background: rgba(2,6,23,0.6); }
   .modal-content{
     width: 100%;
@@ -235,5 +267,6 @@ body{background:var(--bg);color:var(--text);margin:0;padding:18px;} /* removed d
   font-weight: 700;
   /* keep any existing sizing rules (if present elsewhere) */
 }
+
 
 
