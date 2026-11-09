@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Statistics – CSS Research Questionnaire</title>
+<style>
+:root { --bg:#f0f2f5; --surface:#fff; --ink:#1a202c; --muted:#4a5568; --accent:#2b6cb0; --accent-weak:#ebf4ff; --line:#e2e8f0; --danger:#c53030; --warn:#dd6b20; --ok:#2f855a; --radius:8px; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#12161c; --surface:#1c222b; --ink:#e8edf3; --muted:#a0aec0; --accent:#63a4e8; --accent-weak:#223247; --line:#2f3947; --danger:#fc8181; --warn:#f6ad55; --ok:#68d391; }
+}
+* { box-sizing: border-box; }
+body { font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); margin: 0; line-height: 1.55; }
+.wrap { max-width: 1000px; margin: 0 auto; padding: 1.2rem; }
+h1 { font-size: 1.35rem; margin: .2rem 0; }
+h2 { font-size: 1.1rem; margin: 2rem 0 .6rem; color: var(--accent); }
+h3 { font-size: .98rem; margin: 1.2rem 0 .4rem; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.2rem; margin: .8rem 0; }
+.muted { color: var(--muted); font-size: .88rem; }
+.row { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+input[type=password], input[type=text], select { padding: .5rem .6rem; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font: inherit; }
+button, .btn { background: var(--accent); color: #fff; border: 0; border-radius: 6px; padding: .5rem 1rem; font: 600 .9rem inherit; cursor: pointer; }
+button.secondary, label.btn.secondary { background: var(--accent-weak); color: var(--accent); }
+#msg { margin-top: .6rem; font-size: .9rem; }
+#msg.error { color: var(--danger); }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .8rem; margin: .8rem 0; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: .9rem 1rem; }
+.kpi .v { font-size: 1.7rem; font-weight: 700; color: var(--accent); }
+.kpi .l { font-size: .82rem; color: var(--muted); }
+.bar-row { display: grid; grid-template-columns: minmax(130px, 38%) 1fr 150px; gap: .6rem; align-items: center; margin: .35rem 0; font-size: .88rem; }
+.bar-track { background: var(--accent-weak); border-radius: 4px; height: 16px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--accent); border-radius: 4px; }
+.bar-fill.warn { background: var(--warn); }
+.bar-val { font-variant-numeric: tabular-nums; font-size: .85rem; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .85rem; }
+th, td { border: 1px solid var(--line); padding: .4rem .5rem; text-align: center; }
+th { background: var(--accent-weak); color: var(--accent); font-size: .78rem; }
+td:first-child, th:first-child { text-align: left; }
+tr.cat td { font-weight: 700; background: var(--accent-weak); }
+.comments li { margin: .4rem 0; padding: .5rem .7rem; background: var(--bg); border-radius: 6px; font-size: .9rem; white-space: pre-wrap; }
+.rank { margin: 0; padding-left: 1.3rem; font-size: .9rem; }
+.hidden { display: none; }
+a { color: var(--accent); }
+@media print { .noprint { display: none; } body { background: #fff; color: #000; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="row" style="justify-content:space-between">
+    <div>
+      <h1>Questionnaire Statistics</h1>
+      <div class="muted">Challenges in Developing CSS Skills – Grade 11 Kyanite ALS Learners</div>
+    </div>
+    <a href="index.html" class="noprint">&larr; Back to questionnaire</a>
+  </div>
+
+  <div class="card noprint">
+    <div class="row">
+      <input type="password" id="key" placeholder="Admin key" autocomplete="current-password">
+      <button id="loadBtn">Load live responses</button>
+      <label class="btn secondary" for="csvFile">Open CSV file</label>
+      <input type="file" id="csvFile" accept=".csv,text/csv" class="hidden">
+      <button class="secondary" id="localBtn">This browser's responses</button>
+      <button class="secondary" id="sampleBtn">Sample data</button>
+    </div>
+    <div id="msg" class="muted">Enter the admin key you set in Apps Script to load the live results, or open a CSV exported from your Google Sheet.</div>
+  </div>
+
+  <div id="out" class="hidden">
+    <div class="card noprint">
+      <div class="row">
+        <strong>Filter:</strong>
+        <select id="fField">
+          <option value="">All respondents</option>
+          <option value="age">Age</option>
+          <option value="sex">Sex</option>
+          <option value="employment">Employment status</option>
+          <option value="prior_exp">Prior computer experience</option>
+        </select>
+        <select id="fValue" class="hidden"></select>
+        <button class="secondary" id="csvBtn">Download CSV</button>
+        <button class="secondary" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+
+    <h2>Demographic profile</h2>
+    <div class="card" id="demo"></div>
+
+    <h2>Part II – Availability of CSS learning resources</h2>
+    <div class="card"><div class="muted">4 = Highly Available · 3 = Available · 2 = Rarely Available · 1 = Not Available</div><div id="p2bars"></div></div>
+    <div class="card scroll" id="p2table"></div>
+
+    <h2>Part III – Level of challenges in developing CSS skills</h2>
+    <div class="card"><div class="muted">4 = Highly Challenging · 3 = Challenging · 2 = Slightly Challenging · 1 = Not Challenging</div><div id="p3bars"></div></div>
+    <div class="card" id="rank3"></div>
+    <div class="card scroll" id="p3table"></div>
+
+    <h2>Additional comments</h2>
+    <div class="card"><ul class="comments" id="comments" style="list-style:none;padding:0;margin:0"></ul></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="questions.js"></script>
+<script>
+const Q = window.QUESTIONS;
+const ENDPOINT = (window.APP_CONFIG && window.APP_CONFIG.ENDPOINT) || "";
+const $ = id => document.getElementById(id);
+const ALL = [...Q.partII, ...Q.partIII];
+const ITEM_IDS = [].concat(...ALL.map(g => g.items.map(i => i.id)));
+const COLS = ["timestamp", "age", "sex", "employment", "prior_exp", ...ITEM_IDS, "comments"];
+const DEMO = {
+  age: { label: "Age", opts: { "15-17": "15–17", "18-20": "18–20", "21-23": "21–23", "24+": "24 and above" } },
+  sex: { label: "Sex", opts: { male: "Male", female: "Female" } },
+  employment: { label: "Employment status", opts: { employed: "Employed", "self-employed": "Self-employed", unemployed: "Unemployed", student_only: "Student only" } },
+  prior_exp: { label: "Prior computer experience", opts: { none: "None", basic: "Basic", intermediate: "Intermediate", advanced: "Advanced" } }
+};
+let DATA = [];
+
+function interp(m, part) {
+  const labels = part === 2
+    ? ["Highly Available", "Available", "Rarely Available", "Not Available"]
+    : ["Highly Challenging", "Challenging", "Slightly Challenging", "Not Challenging"];
+  return m >= 3.25 ? labels[0] : m >= 2.5 ? labels[1] : m >= 1.75 ? labels[2] : labels[3];
+}
+const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : NaN;
+const sd = a => { if (a.length < 2) return NaN; const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+const f2 = x => isNaN(x) ? "–" : x.toFixed(2);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const nums = (rows, id) => rows.map(r => Number(r[id])).filter(x => x >= 1 && x <= 4);
+
+function setMsg(t, err) { $("msg").textContent = t; $("msg").className = "muted" + (err ? " error" : ""); $("msg").style.color = err ? "var(--danger)" : ""; }
+
+/* ---------- loading ---------- */
+async function loadLive() {
+  if (!ENDPOINT) { setMsg("No ENDPOINT set in config.js yet. See the README (step 3).", true); return; }
+  const key = $("key").value.trim();
+  if (!key) { setMsg("Enter the admin key first.", true); return; }
+  setMsg("Loading...");
+  try {
+    const res = await fetch(ENDPOINT + "?key=" + encodeURIComponent(key));
+    const j = await res.json();
+    if (!j.ok) throw new Error(j.error === "unauthorized" ? "Wrong admin key." : j.error);
+    setData(j.rows.map(r => { r.timestamp = r.timestamp ? String(r.timestamp) : ""; return r; }));
+    setMsg("Loaded " + j.rows.length + " live responses.");
+  } catch (e) { setMsg("Could not load: " + e.message, true); }
+}
+
+function parseCSV(text) {
+  const rows = []; let row = [], f = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true;
+    else if (c === ",") { row.push(f); f = ""; }
+    else if (c === "\n" || c === "\r") { if (c === "\r" && text[i + 1] === "\n") i++; row.push(f); f = ""; if (row.length > 1 || row[0] !== "") rows.push(row); row = []; }
+    else f += c;
+  }
+  if (f !== "" || row.length) { row.push(f); rows.push(row); }
+  const head = rows.shift() || [];
+  return rows.map(r => Object.fromEntries(head.map((h, i) => [h.trim(), r[i] ?? ""])));
+}
+
+function sampleData(n) {
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const rows = [];
+  for (let i = 0; i < n; i++) {
+    const r = { timestamp: new Date(Date.now() - i * 3600e3).toISOString() };
+    Object.keys(DEMO).forEach(k => r[k] = pick(Object.keys(DEMO[k].opts)));
+    ALL.forEach((g, gi) => g.items.forEach(it => {
+      const base = gi < 3 ? 2.4 : 2.9; // resources: lowish, challenges: moderate
+      r[it.id] = Math.min(4, Math.max(1, Math.round(base + (Math.random() - 0.5) * 2.4)));
+    }));
+    r.comments = i % 7 === 0 ? "Sample comment " + (i + 1) : "";
+    rows.push(r);
+  }
+  return rows;
+}
+
+/* ---------- rendering ---------- */
+function setData(rows) {
+  DATA = rows;
+  $("fField").value = ""; $("fValue").classList.add("hidden");
+  $("out").classList.remove("hidden");
+  render();
+}
+
+function currentRows() {
+  const f = $("fField").value, v = $("fValue").value;
+  return f ? DATA.filter(r => r[f] === v) : DATA;
+}
+
+function bars(el, groups, part) {
+  el.innerHTML = groups.map(g => {
+    const m = mean([].concat(...g.items.map(i => nums(rows_, i.id))));
+    return `<div class="bar-row"><div>${esc(g.title)}</div><div class="bar-track"><div class="bar-fill ${part === 3 ? "warn" : ""}" style="width:${isNaN(m) ? 0 : m / 4 * 100}%"></div></div><div class="bar-val">${f2(m)} · ${isNaN(m) ? "" : interp(m, part)}</div></div>`;
+  }).join("");
+}
+
+let rows_ = [];
+function table(el, groups, part) {
+  let h = `<table><thead><tr><th>Item</th><th>1</th><th>2</th><th>3</th><th>4</th><th>Mean</th><th>SD</th><th>Interpretation</th></tr></thead><tbody>`;
+  groups.forEach(g => {
+    const all = [].concat(...g.items.map(i => nums(rows_, i.id)));
+    h += `<tr class="cat"><td colspan="5">${esc(g.title)}</td><td>${f2(mean(all))}</td><td>${f2(sd(all))}</td><td>${isNaN(mean(all)) ? "–" : interp(mean(all), part)}</td></tr>`;
+    g.items.forEach(i => {
+      const v = nums(rows_, i.id), m = mean(v);
+      const c = [1, 2, 3, 4].map(k => v.filter(x => x === k).length);
+      h += `<tr><td>${i.n}. ${esc(i.text)}</td>${c.map(x => `<td>${x}</td>`).join("")}<td>${f2(m)}</td><td>${f2(sd(v))}</td><td>${isNaN(m) ? "–" : interp(m, part)}</td></tr>`;
+    });
+  });
+  el.innerHTML = h + "</tbody></table>";
+}
+
+function render() {
+  rows_ = currentRows();
+  const n = rows_.length;
+  const all2 = [].concat(...Q.partII.flatMap(g => g.items.map(i => nums(rows_, i.id))));
+  const all3 = [].concat(...Q.partIII.flatMap(g => g.items.map(i => nums(rows_, i.id))));
+  const m2 = mean(all2), m3 = mean(all3);
+  $("kpis").innerHTML = `
+    <div class="kpi"><div class="v">${n}</div><div class="l">Respondents${$("fField").value ? " (filtered, of " + DATA.length + ")" : ""}</div></div>
+    <div class="kpi"><div class="v">${f2(m2)}</div><div class="l">Overall availability mean · ${isNaN(m2) ? "–" : interp(m2, 2)}</div></div>
+    <div class="kpi"><div class="v">${f2(m3)}</div><div class="l">Overall challenge mean · ${isNaN(m3) ? "–" : interp(m3, 3)}</div></div>`;
+
+  $("demo").innerHTML = Object.entries(DEMO).map(([k, d]) => {
+    const counts = Object.keys(d.opts).map(o => [d.opts[o], rows_.filter(r => r[k] === o).length]);
+    return `<h3>${d.label}</h3>` + counts.map(([l, c]) => {
+      const p = n ? c / n * 100 : 0;
+      return `<div class="bar-row"><div>${l}</div><div class="bar-track"><div class="bar-fill" style="width:${p}%"></div></div><div class="bar-val">${c} (${p.toFixed(1)}%)</div></div>`;
+    }).join("");
+  }).join("");
+
+  bars($("p2bars"), Q.partII, 2); table($("p2table"), Q.partII, 2);
+  bars($("p3bars"), Q.partIII, 3); table($("p3table"), Q.partIII, 3);
+
+  const items3 = Q.partIII.flatMap(g => g.items.map(i => ({ ...i, m: mean(nums(rows_, i.id)) }))).filter(i => !isNaN(i.m)).sort((a, b) => b.m - a.m);
+  const items2 = Q.partII.flatMap(g => g.items.map(i => ({ ...i, m: mean(nums(rows_, i.id)) }))).filter(i => !isNaN(i.m)).sort((a, b) => a.m - b.m);
+  $("rank3").innerHTML = `<h3 style="margin-top:0">Top 5 most challenging skills</h3><ol class="rank">${items3.slice(0, 5).map(i => `<li>${esc(i.text)} <strong>(${f2(i.m)})</strong></li>`).join("")}</ol>
+    <h3>5 least available resources</h3><ol class="rank">${items2.slice(0, 5).map(i => `<li>${esc(i.text)} <strong>(${f2(i.m)})</strong></li>`).join("")}</ol>`;
+
+  const cm = rows_.map(r => (r.comments || "").trim()).filter(Boolean);
+  $("comments").innerHTML = cm.length ? cm.map(c => `<li>${esc(c)}</li>`).join("") : '<li class="muted">No comments yet.</li>';
+}
+
+/* ---------- events ---------- */
+$("loadBtn").onclick = loadLive;
+$("key").addEventListener("keydown", e => { if (e.key === "Enter") loadLive(); });
+$("sampleBtn").onclick = () => { setData(sampleData(40)); setMsg("Showing 40 randomly generated sample responses (not real data)."); };
+$("localBtn").onclick = () => {
+  let rows = []; try { rows = JSON.parse(localStorage.getItem("css_responses_local") || "[]"); } catch (e) {}
+  rows.forEach(r => r.timestamp = r.submitted_at);
+  if (!rows.length) { setMsg("No responses saved in this browser.", true); return; }
+  setData(rows); setMsg(rows.length + " responses from this browser's local backup.");
+};
+$("csvFile").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  const rows = parseCSV(await f.text());
+  if (!rows.length) { setMsg("That CSV has no rows.", true); return; }
+  setData(rows); setMsg("Loaded " + rows.length + " responses from " + f.name + ".");
+};
+$("fField").onchange = () => {
+  const k = $("fField").value, sel = $("fValue");
+  if (!k) { sel.classList.add("hidden"); render(); return; }
+  sel.innerHTML = Object.entries(DEMO[k].opts).map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
+  sel.classList.remove("hidden"); render();
+};
+$("fValue").onchange = render;
+$("csvBtn").onclick = () => {
+  const q = s => '"' + String(s ?? "").replace(/"/g, '""') + '"';
+  const csv = [COLS.join(","), ...currentRows().map(r => COLS.map(c => q(r[c])).join(","))].join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv" }));
+  a.download = "css-responses.csv"; a.click();
+};
+</script>
+</body>
+</html>

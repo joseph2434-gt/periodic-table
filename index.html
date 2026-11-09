@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Questionnaire: CSS Skills Development Among ALS Learners</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f2f5;
+  --surface: #ffffff;
+  --ink: #1a202c;
+  --muted: #4a5568;
+  --accent: #2b6cb0;
+  --accent-weak: #ebf4ff;
+  --line: #e2e8f0;
+  --danger: #c53030;
+  --step-0: clamp(0.88rem, 0.85rem + 0.15vw, 1rem);
+  --space: clamp(0.9rem, 0.8rem + 0.5vw, 1.3rem);
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+  font-size: var(--step-0);
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--bg);
+  margin: 0;
+  padding: 0;
+}
+
+.paper {
+  max-width: 800px;
+  margin: 1.5rem auto;
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 12px 32px -8px rgba(0,0,0,0.1);
+  border-radius: var(--radius);
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+@media print {
+  body { background: #fff; }
+  .paper { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; }
+  .no-print { display: none; }
+  .page-break { page-break-before: always; }
+}
+
+@page { size: A4; margin: 15mm; }
+
+/* Header */
+.header {
+  text-align: center;
+  padding-bottom: 1.2rem;
+  border-bottom: 3px double var(--line);
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  font-size: clamp(1.1rem, 1rem + 0.5vw, 1.4rem);
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+  line-height: 1.3;
+}
+
+.header .subtitle {
+  font-size: 0.92rem;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+.header .researchers {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.6rem;
+}
+
+/* Instructions box */
+.instructions {
+  background: var(--accent-weak);
+  border-left: 4px solid var(--accent);
+  padding: 1rem 1.2rem;
+  margin: 1.2rem 0;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 0.92rem;
+}
+
+.instructions strong { color: var(--accent); }
+
+/* Section headings */
+.section-title {
+  background: var(--accent);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: var(--radius);
+  margin: 1.8rem 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-number {
+  background: rgba(255,255,255,0.25);
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* Demographic grid */
+.demo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+@media (max-width: 600px) {
+  .demo-grid { grid-template-columns: 1fr; }
+}
+
+.demo-field {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.8rem 1rem;
+}
+
+.demo-field label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  color: var(--accent);
+}
+
+.demo-field input[type="text"],
+.demo-field input[type="number"],
+.demo-field select {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  padding: 0.3rem 0;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: transparent;
+  outline: none;
+}
+
+.demo-field input:focus,
+.demo-field select:focus {
+  border-bottom-color: var(--accent);
+}
+
+/* Radio / checkbox groups */
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.2rem;
+  margin-top: 0.3rem;
+}
+
+.options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+/* Likert tables */
+.likert-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.8rem 0 1.5rem;
+  font-size: 0.9rem;
+}
+
+.likert-table th,
+.likert-table td {
+  border: 1px solid var(--line);
+  padding: 0.55rem 0.5rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.likert-table th {
+  background: var(--accent-weak);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.likert-table td:first-child {
+  text-align: left;
+  min-width: 280px;
+  font-size: 0.88rem;
+}
+
+.likert-table td {
+  min-width: 52px;
+}
+
+.likert-table thead th:first-child {
+  text-align: left;
+}
+
+/* Subsection labels */
+.subsection {
+  font-weight: 700;
+  color: var(--accent);
+  margin: 1.2rem 0 0.5rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.subsection::before {
+  content: "";
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* Legend box */
+.legend-box {
+  background: #f7fafc;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.legend-box h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.3rem 1.5rem;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 600px) {
+  .legend-grid { grid-template-columns: 1fr; }
+}
+
+/* Footer note */
+.footer-note {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--line);
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* Checkbox for consent */
+.consent-box {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin: 1.5rem 0;
+  background: #f7fafc;
+}
+
+.consent-box label {
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+/* Signature area */
+.signature-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.signature-line {
+  border-bottom: 1px solid var(--ink);
+  height: 2.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.signature-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* Small helper */
+.small { font-size: 0.85rem; color: var(--muted); }
+
+/* Page break helper */
+.page-break { page-break-before: always; }
+
+/* Compact likert for Part II */
+.compact-likert th,
+.compact-likert td {
+  padding: 0.45rem 0.4rem;
+  font-size: 0.86rem;
+}
+
+.compact-likert td:first-child {
+  min-width: 220px;
+}
+
+/* ---- online version additions ---- */
+.print-only { display: none; }
+@media print { .print-only { display: grid; } .submit-area { display: none; } }
+.submit-area { margin: 1.5rem 0 0.5rem; text-align: center; }
+.btn { background: var(--accent); color: #fff; border: 0; border-radius: var(--radius); padding: 0.8rem 2rem; font: 600 1rem inherit; font-family: inherit; cursor: pointer; }
+.btn:disabled { opacity: .6; cursor: wait; }
+.btn.secondary { background: var(--accent-weak); color: var(--accent); }
+.status { margin-top: .8rem; font-size: .92rem; min-height: 1.3em; }
+.status.error { color: var(--danger); font-weight: 600; }
+tr.missing td:first-child, .demo-field.missing, .consent-box.missing { outline: 2px solid var(--danger); outline-offset: -2px; border-radius: var(--radius); }
+.overlay { position: fixed; inset: 0; background: rgba(26,32,44,.6); display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
+.overlay.show { display: flex; }
+.overlay .box { background: #fff; border-radius: var(--radius); padding: 2rem; max-width: 420px; text-align: center; }
+.overlay h2 { margin-top: 0; }
+.admin-link { text-align:center; font-size:.8rem; margin: 1rem 0 2rem; }
+.admin-link a { color: var(--muted); }
+@media print { .admin-link { display:none; } }
+</style>
+</head>
+<body>
+<div class="paper">
+
+<!-- HEADER -->
+<div class="header">
+  <h1>Research Questionnaire</h1>
+  <div class="subtitle">The Level of Challenges in Developing Computer Systems Servicing (CSS) Skills<br>Among Grade 11 – Kyanite ALS Learners</div>
+  <div class="researchers">Researchers: Joseph Alambat, Maria Cristina A. Alasaas, Mark Anthony M. Fetalvero,<br>Aljae C. Guzman, James Denver C. Pastor, Jaymar T. Sajonia, Edfran Santiago, Rocelyn C. Sait</div>
+  <div class="subtitle" style="margin-top:0.5rem;">Alternative Learning School, Vigan Conservation Complex, Vigan City</div>
+  <div class="subtitle">School Year 2026–2027</div>
+</div>
+
+<!-- INSTRUCTIONS -->
+<div class="instructions">
+  <strong>Instructions:</strong> Please read each item carefully. Select the response that best describes your experience. There are no right or wrong answers. Your honest responses will be treated with strict confidentiality and used solely for research purposes. Write legibly and avoid leaving any item unanswered. Thank you for your participation.
+</div>
+
+<!-- PART I -->
+<div class="section-title"><span class="section-number">I</span> Demographic Profile</div>
+
+<p class="small">Please provide the following information about yourself by checking (&#10003;) the appropriate box or filling in the blank.</p>
+
+<div class="demo-grid">
+  <div class="demo-field">
+    <label>1. Age</label>
+    <div class="options">
+      <label><input type="radio" name="age" value="15-17"> 15 – 17 years old</label>
+      <label><input type="radio" name="age" value="18-20"> 18 – 20 years old</label>
+      <label><input type="radio" name="age" value="21-23"> 21 – 23 years old</label>
+      <label><input type="radio" name="age" value="24+"> 24 years old and above</label>
+    </div>
+  </div>
+
+  <div class="demo-field">
+    <label>2. Sex</label>
+    <div class="options">
+      <label><input type="radio" name="sex" value="male"> Male</label>
+      <label><input type="radio" name="sex" value="female"> Female</label>
+    </div>
+  </div>
+
+  <div class="demo-field">
+    <label>3. Employment Status</label>
+    <div class="options">
+      <label><input type="radio" name="employment" value="employed"> Employed (full-time / part-time)</label>
+      <label><input type="radio" name="employment" value="self-employed"> Self-employed</label>
+      <label><input type="radio" name="employment" value="unemployed"> Unemployed</label>
+      <label><input type="radio" name="employment" value="student_only"> Student only (not working)</label>
+    </div>
+  </div>
+
+  <div class="demo-field">
+    <label>4. Prior Experience with Computers</label>
+    <div class="options">
+      <label><input type="radio" name="prior_exp" value="none"> No prior experience</label>
+      <label><input type="radio" name="prior_exp" value="basic"> Basic use (typing, browsing)</label>
+      <label><input type="radio" name="prior_exp" value="intermediate"> Intermediate (software, minor repairs)</label>
+      <label><input type="radio" name="prior_exp" value="advanced"> Advanced (assembly, networking, etc.)</label>
+    </div>
+  </div>
+</div>
+
+<!-- PART II -->
+<div class="section-title"><span class="section-number">II</span> Level of Availability of CSS Learning Resources</div>
+
+<p class="small">The items below describe the CSS learning resources available in your ALS Community Learning Center. Please indicate your level of agreement with each statement using the scale below.</p>
+
+<div class="legend-box">
+  <h4>Scale:</h4>
+  <div class="legend-grid">
+    <div><strong>4</strong> = Highly Available (always accessible, sufficient in number, and fully functional)</div>
+    <div><strong>3</strong> = Available (usually accessible but may occasionally be limited in number or condition)</div>
+    <div><strong>2</strong> = Rarely Available (seldom accessible, often insufficient, or partially functional)</div>
+    <div><strong>1</strong> = Not Available (never accessible or completely non-functional)</div>
+  </div>
+</div>
+
+<!-- A. Computer Units -->
+<div class="subsection">A. Computer Units</div>
+<table class="likert-table compact-likert">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>1</th><th>2</th><th>3</th><th>4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1. There are enough functional desktop computer units for hands-on practice.</td>
+      <td><input type="radio" name="cu1" value="1"></td>
+      <td><input type="radio" name="cu1" value="2"></td>
+      <td><input type="radio" name="cu1" value="3"></td>
+      <td><input type="radio" name="cu1" value="4"></td>
+    </tr>
+    <tr><td>2. The computer units are in good working condition (no hardware defects).</td>
+      <td><input type="radio" name="cu2" value="1"></td>
+      <td><input type="radio" name="cu2" value="2"></td>
+      <td><input type="radio" name="cu2" value="3"></td>
+      <td><input type="radio" name="cu2" value="4"></td>
+    </tr>
+    <tr><td>3. Each learner has adequate time to use a computer unit during sessions.</td>
+      <td><input type="radio" name="cu3" value="1"></td>
+      <td><input type="radio" name="cu3" value="2"></td>
+      <td><input type="radio" name="cu3" value="3"></td>
+      <td><input type="radio" name="cu3" value="4"></td>
+    </tr>
+    <tr><td>4. The computers have updated operating systems and necessary software installed.</td>
+      <td><input type="radio" name="cu4" value="1"></td>
+      <td><input type="radio" name="cu4" value="2"></td>
+      <td><input type="radio" name="cu4" value="3"></td>
+      <td><input type="radio" name="cu4" value="4"></td>
+    </tr>
+    <tr><td>5. There are extra or spare computer units available for replacement or repair practice.</td>
+      <td><input type="radio" name="cu5" value="1"></td>
+      <td><input type="radio" name="cu5" value="2"></td>
+      <td><input type="radio" name="cu5" value="3"></td>
+      <td><input type="radio" name="cu5" value="4"></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- B. Tools and Equipment -->
+<div class="subsection">B. Tools and Equipment</div>
+<table class="likert-table compact-likert">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>1</th><th>2</th><th>3</th><th>4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>6. Screwdrivers (flathead and Phillips) are available for computer assembly and disassembly.</td>
+      <td><input type="radio" name="te1" value="1"></td>
+      <td><input type="radio" name="te1" value="2"></td>
+      <td><input type="radio" name="te1" value="3"></td>
+      <td><input type="radio" name="te1" value="4"></td>
+    </tr>
+    <tr><td>7. Multimeters and other diagnostic tools are available for hardware troubleshooting.</td>
+      <td><input type="radio" name="te2" value="1"></td>
+      <td><input type="radio" name="te2" value="2"></td>
+      <td><input type="radio" name="te2" value="3"></td>
+      <td><input type="radio" name="te2" value="4"></td>
+    </tr>
+    <tr><td>8. Network cables, crimping tools, and testers are available for networking activities.</td>
+      <td><input type="radio" name="te3" value="1"></td>
+      <td><input type="radio" name="te3" value="2"></td>
+      <td><input type="radio" name="te3" value="3"></td>
+      <td><input type="radio" name="te3" value="4"></td>
+    </tr>
+    <tr><td>9. Cleaning materials (brush, blower, isopropyl alcohol, etc.) are available for preventive maintenance.</td>
+      <td><input type="radio" name="te4" value="1"></td>
+      <td><input type="radio" name="te4" value="2"></td>
+      <td><input type="radio" name="te4" value="3"></td>
+      <td><input type="radio" name="te4" value="4"></td>
+    </tr>
+    <tr><td>10. There are enough tools for all learners to use during hands-on activities.</td>
+      <td><input type="radio" name="te5" value="1"></td>
+      <td><input type="radio" name="te5" value="2"></td>
+      <td><input type="radio" name="te5" value="3"></td>
+      <td><input type="radio" name="te5" value="4"></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- C. Laboratory Facilities -->
+<div class="subsection">C. Laboratory Facilities</div>
+<table class="likert-table compact-likert">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>1</th><th>2</th><th>3</th><th>4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>11. The learning center has a dedicated computer laboratory or practice area.</td>
+      <td><input type="radio" name="lf1" value="1"></td>
+      <td><input type="radio" name="lf1" value="2"></td>
+      <td><input type="radio" name="lf1" value="3"></td>
+      <td><input type="radio" name="lf1" value="4"></td>
+    </tr>
+    <tr><td>12. The laboratory or practice area is well-ventilated and has adequate lighting.</td>
+      <td><input type="radio" name="lf2" value="1"></td>
+      <td><input type="radio" name="lf2" value="2"></td>
+      <td><input type="radio" name="lf2" value="3"></td>
+      <td><input type="radio" name="lf2" value="4"></td>
+    </tr>
+    <tr><td>13. The laboratory has stable electrical supply and proper power outlets for computer use.</td>
+      <td><input type="radio" name="lf3" value="1"></td>
+      <td><input type="radio" name="lf3" value="2"></td>
+      <td><input type="radio" name="lf3" value="3"></td>
+      <td><input type="radio" name="lf3" value="4"></td>
+    </tr>
+    <tr><td>14. Internet connectivity is available in the learning center for software downloads and updates.</td>
+      <td><input type="radio" name="lf4" value="1"></td>
+      <td><input type="radio" name="lf4" value="2"></td>
+      <td><input type="radio" name="lf4" value="3"></td>
+      <td><input type="radio" name="lf4" value="4"></td>
+    </tr>
+    <tr><td>15. The laboratory has proper workbenches or tables suitable for computer assembly and repair.</td>
+      <td><input type="radio" name="lf5" value="1"></td>
+      <td><input type="radio" name="lf5" value="2"></td>
+      <td><input type="radio" name="lf5" value="3"></td>
+      <td><input type="radio" name="lf5" value="4"></td>
+    </tr>
+  </tbody>
+</table>
+
+</div><!-- end paper -->
+
+<!-- PAGE BREAK for Part III -->
+<div class="paper page-break">
+
+<!-- PART III -->
+<div class="section-title"><span class="section-number">III</span> Level of Challenges in Developing CSS Skills</div>
+
+<p class="small">The items below describe the challenges you may encounter in developing Computer Systems Servicing skills. Please indicate the level of difficulty you experience for each item using the scale below.</p>
+
+<div class="legend-box">
+  <h4>Scale:</h4>
+  <div class="legend-grid">
+    <div><strong>4</strong> = Highly Challenging (extremely difficult, rarely able to perform the task)</div>
+    <div><strong>3</strong> = Challenging (moderately difficult, sometimes able to perform with assistance)</div>
+    <div><strong>2</strong> = Slightly Challenging (somewhat difficult, usually able to perform with minimal guidance)</div>
+    <div><strong>1</strong> = Not Challenging (easy, able to perform the task independently)</div>
+  </div>
+</div>
+
+<!-- A. Computer Assembly and Disassembly -->
+<div class="subsection">A. Computer Assembly and Disassembly</div>
+<table class="likert-table">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>1</th><th>2</th><th>3</th><th>4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1. Identifying and differentiating computer hardware components (motherboard, CPU, RAM, etc.).</td>
+      <td><input type="radio" name="cad1" value="1"></td>
+      <td><input type="radio" name="cad1" value="2"></td>
+      <td><input type="radio" name="cad1" value="3"></td>
+      <td><input type="radio" name="cad1" value="4"></td>
+    </tr>
+    <tr><td>2. Properly installing and removing the CPU, RAM, and expansion cards without damaging components.</td>
+      <td><input type="radio" name="cad2" value="1"></td>
+      <td><input type="radio" name="cad2" value="2"></td>
+      <td><input type="radio" name="cad2" value="3"></td>
+      <td><input type="radio" name="cad2" value="4"></td>
+    </tr>
+    <tr><td>3. Connecting front panel cables (power switch, reset, LEDs) to the correct motherboard pins.</td>
+      <td><input type="radio" name="cad3" value="1"></td>
+      <td><input type="radio" name="cad3" value="2"></td>
+      <td><input type="radio" name="cad3" value="3"></td>
+      <td><input type="radio" name="cad3" value="4"></td>
+    </tr>
+    <tr><td>4. Assembling a complete computer system from individual components.</td>
+      <td><input type="radio" name="cad4" value="1"></td>
+      <td><input type="radio" name="cad4" value="2"></td>
+      <td><input type="radio" name="cad4" value="3"></td>
+      <td><input type="radio" name="cad4" value="4"></td>
+    </tr>
+    <tr><td>5. Disassembling a computer system safely and organizing the removed parts.</td>
+      <td><input type="radio" name="cad5" value="1"></td>
+      <td><input type="radio" name="cad5" value="2"></td>
+      <td><input type="radio" name="cad5" value="3"></td>
+      <td><input type="radio" name="cad5" value="4"></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- B. Installation of Operating Systems and Software -->
+<div class="subsection">B. Installation of Operating Systems and Software</div>
+<table class="likert-table">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>1</th><th>2</th><th>3</th><th>4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>6. Preparing bootable installation media (USB flash drive or DVD) for an operating system.</td>
+      <td><input type="radio" name="ios1" value="1"></td>
+      <td><input type="radio" name="ios1" value="2"></td>
+      <td><input type="radio" name="ios1" value="3"></td>
+      <td><input type="radio" name="ios1" value="4"></td>
+    </tr>
+    <tr><td>7. Configuring BIOS/UEFI settings before installing an operating system.</td>
+      <td><input type="radio" name="ios2" value="1"></td>
+      <td><input type="radio" name="ios2" value="2"></td>
+      <td><input type="radio" name="ios2" value="3"></td>
+      <td><input type="radio" name="ios2" value="4"></td>
+    </tr>
+    <tr><td>8. Installing a Windows or Linux operating system on a computer.</td>
+      <td><input type="radio" name="ios3" value="1"></td>
+      <td><input type="radio" name="ios3" value="2"></td>
+      <td><input type="radio" name="ios3" value="3"></td>
+      <td><input type="radio" name="ios3" value="4"></td>
+    </tr>
+    <tr><td>9. Installing and updating device drivers after operating system installation.</td>
+      <td><input type="radio" name="ios4" value="1"></td>
+      <td><input type="radio" name="ios4" value="2"></td>
+      <td><input type="radio" name="ios4" value="3"></td>
+      <td><input type="radio" name="ios4" value="4"></td>
+    </tr>
+    <tr><td>10. Installing common application software (antivirus, office suite, utilities) and verifying functionality.</td>
+      <td><input type="radio" name="ios5" value="1"></td>
+      <td><input type="radio" name="ios5" value="2"></td>
+      <td><input type="radio" name="ios5" value="3"></td>
+      <td><input type="radio" name="ios5" value="4"></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- C. Hardware Troubleshooting -->
+<div class="subsection">C. Hardware Troubleshooting</div>
+<table class="likert-table">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>1</th><th>2</th><th>3</th><th>4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>11. Diagnosing the cause when a computer fails to power on.</td>
+      <td><input type="radio" name="ht1" value="1"></td>
+      <td><input type="radio" name="ht1" value="2"></td>
+      <td><input type="radio" name="ht1" value="3"></td>
+      <td><input type="radio" name="ht1" value="4"></td>
+    </tr>
+    <tr><td>12. Identifying and resolving issues related to RAM (e.g., beep codes, no display).</td>
+      <td><input type="radio" name="ht2" value="1"></td>
+      <td><input type="radio" name="ht2" value="2"></td>
+      <td><input type="radio" name="ht2" value="3"></td>
+      <td><input type="radio" name="ht2" value="4"></td>
+    </tr>
+    <tr><td>13. Troubleshooting display problems (no video output, distorted display, wrong resolution).</td>
+      <td><input type="radio" name="ht3" value="1"></td>
+      <td><input type="radio" name="ht3" value="2"></td>
+      <td><input type="radio" name="ht3" value="3"></td>
+      <td><input type="radio" name="ht3" value="4"></td>
+    </tr>
+    <tr><td>14. Testing and replacing defective power supply units (PSU).</td>
+      <td><input type="radio" name="ht4" value="1"></td>
+      <td><input type="radio" name="ht4" value="2"></td>
+      <td><input type="radio" name="ht4" value="3"></td>
+      <td><input type="radio" name="ht4" value="4"></td>
+    </tr>
+    <tr><td>15. Using a multimeter or diagnostic tool to check voltage and continuity in computer circuits.</td>
+      <td><input type="radio" name="ht5" value="1"></td>
+      <td><input type="radio" name="ht5" value="2"></td>
+      <td><input type="radio" name="ht5" value="3"></td>
+      <td><input type="radio" name="ht5" value="4"></td>
+    </tr>
+  </tbody>
+</table>
+
+</div><!-- end paper -->
+
+<!-- PAGE BREAK for remaining Part III -->
+<div class="paper page-break">
+
+<!-- D. Networking and Network Configuration -->
+<div class="subsection">D. Networking and Network Configuration</div>
+<table class="likert-table">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>1</th><th>2</th><th>3</th><th>4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>16. Identifying different types of network cables (UTP Cat5e/Cat6) and connectors (RJ45).</td>
+      <td><input type="radio" name="net1" value="1"></td>
+      <td><input type="radio" name="net1" value="2"></td>
+      <td><input type="radio" name="net1" value="3"></td>
+      <td><input type="radio" name="net1" value="4"></td>
+    </tr>
+    <tr><td>17. Crimping a straight-through and crossover Ethernet cable correctly.</td>
+      <td><input type="radio" name="net2" value="1"></td>
+      <td><input type="radio" name="net2" value="2"></td>
+      <td><input type="radio" name="net2" value="3"></td>
+      <td><input type="radio" name="net2" value="4"></td>
+    </tr>
+    <tr><td>18. Configuring IP addresses, subnet masks, and default gateways on a computer.</td>
+      <td><input type="radio" name="net3" value="1"></td>
+      <td><input type="radio" name="net3" value="2"></td>
+      <td><input type="radio" name="net3" value="3"></td>
+      <td><input type="radio" name="net3" value="4"></td>
+    </tr>
+    <tr><td>19. Setting up a small local area network (LAN) using a switch or router.</td>
+      <td><input type="radio" name="net4" value="1"></td>
+      <td><input type="radio" name="net4" value="2"></td>
+      <td><input type="radio" name="net4" value="3"></td>
+      <td><input type="radio" name="net4" value="4"></td>
+    </tr>
+    <tr><td>20. Troubleshooting basic network connectivity issues (e.g., no internet, limited connectivity).</td>
+      <td><input type="radio" name="net5" value="1"></td>
+      <td><input type="radio" name="net5" value="2"></td>
+      <td><input type="radio" name="net5" value="3"></td>
+      <td><input type="radio" name="net5" value="4"></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- E. Preventive Maintenance and Use of PPE -->
+<div class="subsection">E. Preventive Maintenance and Use of Personal Protective Equipment (PPE)</div>
+<table class="likert-table">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>1</th><th>2</th><th>3</th><th>4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>21. Identifying the correct personal protective equipment (PPE) for computer servicing tasks.</td>
+      <td><input type="radio" name="pm1" value="1"></td>
+      <td><input type="radio" name="pm1" value="2"></td>
+      <td><input type="radio" name="pm1" value="3"></td>
+      <td><input type="radio" name="pm1" value="4"></td>
+    </tr>
+    <tr><td>22. Properly using an anti-static wrist strap and following electrostatic discharge (ESD) precautions.</td>
+      <td><input type="radio" name="pm2" value="1"></td>
+      <td><input type="radio" name="pm2" value="2"></td>
+      <td><input type="radio" name="pm2" value="3"></td>
+      <td><input type="radio" name="pm2" value="4"></td>
+    </tr>
+    <tr><td>23. Cleaning computer components (keyboard, mouse, monitor, system unit) safely and effectively.</td>
+      <td><input type="radio" name="pm3" value="1"></td>
+      <td><input type="radio" name="pm3" value="2"></td>
+      <td><input type="radio" name="pm3" value="3"></td>
+      <td><input type="radio" name="pm3" value="4"></td>
+    </tr>
+    <tr><td>24. Performing routine preventive maintenance (checking fans, removing dust, inspecting cables).</td>
+      <td><input type="radio" name="pm4" value="1"></td>
+      <td><input type="radio" name="pm4" value="2"></td>
+      <td><input type="radio" name="pm4" value="3"></td>
+      <td><input type="radio" name="pm4" value="4"></td>
+    </tr>
+    <tr><td>25. Following safety procedures when handling cleaning chemicals and electrical equipment.</td>
+      <td><input type="radio" name="pm5" value="1"></td>
+      <td><input type="radio" name="pm5" value="2"></td>
+      <td><input type="radio" name="pm5" value="3"></td>
+      <td><input type="radio" name="pm5" value="4"></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- OPEN-ENDED QUESTION -->
+<div class="subsection">F. Additional Comments (Optional)</div>
+<div class="demo-field" style="margin-bottom:1.5rem;">
+  <label>Please share any other challenges, suggestions, or experiences related to developing CSS skills in your learning center.</label>
+  <textarea name="comments" id="comments" rows="4" maxlength="2000" placeholder="Write your answer here (optional)..." style="width:100%;margin-top:0.5rem;border:1px dashed var(--line);border-radius:var(--radius);padding:0.6rem;font-family:inherit;font-size:0.9rem;resize:vertical;"></textarea>
+</div>
+
+<!-- CONSENT -->
+<div class="consent-box">
+  <label>
+    <input type="checkbox" name="consent">
+    <span>I hereby confirm that I have read and understood the purpose of this study. I voluntarily agree to participate, and I understand that my responses will be kept confidential and used only for research purposes.</span>
+  </label>
+</div>
+
+
+<div class="submit-area no-print">
+  <button type="button" class="btn" id="submitBtn">Submit Questionnaire</button>
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+</div>
+
+<!-- SIGNATURE -->
+<div class="signature-area print-only">
+  <div>
+    <div class="signature-line"></div>
+    <div class="signature-label">Respondent's Signature over Printed Name<br><span class="small">Date: _______________</span></div>
+  </div>
+  <div>
+    <div class="signature-line"></div>
+    <div class="signature-label">Researcher's Signature<br><span class="small">Date: _______________</span></div>
+  </div>
+</div>
+
+<div class="footer-note">
+  Thank you for your time and honest participation.<br>
+  For questions or concerns, please contact the researchers through your ALS teacher or learning facilitator.
+</div>
+
+</div><!-- end paper -->
+
+
+<div class="overlay" id="thanks"><div class="box">
+  <h2>Thank you!</h2>
+  <p>Your response has been recorded.</p>
+  <button type="button" class="btn secondary" id="again">Start a new response</button>
+</div></div>
+<p class="admin-link"><a href="stats.html">Researchers: view statistics</a></p>
+<script src="config.js"></script>
+<script src="questions.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
